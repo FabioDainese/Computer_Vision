@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Demo1</title>
+
+    <!-- Bootstrap stuff -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="style/style.css">
+
+    <!-- Other Stuff -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
+        crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <div class="container-fluid my-2">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" id="main-tab-menu" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#WebcamMonitor">Webcam monitor</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#ChromaKey">Procedura ChromaKey</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#ButtonsDetection">Procedura ButtonsDetection</a>
+            </li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div id="WebcamMonitor" class="container tab-pane active border border-top-0 p-2 mw-100">
+                <div class="row content">
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-header text-center"><i class="fas fa-camera pr-2"></i>Webcam preview</div>
+                            <div class="card-body embed-responsive embed-responsive-4by3 bg-dark">
+                                <video id="webcam" class="embed-responsive-item rounded-bottom" preload autoplay loop
+                                    muted poster="img/no-signal.png" width="320" height="240"></video>
+                                <div id="errorMsg"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-header text-center"><i class="fas fa-palette magenta-text pr-2"></i>Magenta
+                                Chroma Key</div>
+                            <div class="card-body chroma p-0">
+                                <div class="row mx-0 text-center mt-3 position-absolute w-100">
+                                    <div class="col-sm-6">
+                                        <div class="col-12 input-group input-group-sm px-0 pr-1 pb-2">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="magenta-erosion"><strong>Erosion:</strong></span>
+                                            </div>
+                                            <input type="number" class="form-control text-center" aria-label="Erosion"
+                                                aria-describedby="magenta-erosion" value="0" step="1" min="0" max="500"
+                                                placeholder="Value" id="m-e">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">px</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="col-12 input-group input-group-sm px-0 pr-1 pb-2">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="magenta-dilation"><strong>Dilation:</strong></span>
+                                            </div>
+                                            <input type="number" class="form-control text-center" aria-label="Dilation"
+                                                aria-describedby="magenta-dilation" value="0" step="1" min="0" max="500"
+                                                placeholder="Value" id="m-d">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">px</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <canvas id="magenta" class="rounded-bottom w-100"></canvas>
+                                <div class="row mx-0 text-center position-absolute color-settings">
+                                    <div class="col-sm-6 mb-3">
+                                        <form class="form-inline">
+                                            <fieldset class="col-12 px-2 border rounded">
+                                                <legend class="col-auto mb-0"><small><strong>Lower bound</strong></small></legend>
+                                                <div class="row mx-0 pb-2">
+                                                    <div class="col-6 input-group input-group-sm px-0 pr-1 pb-2">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" id="magenta-lower-h">H</span>
+                                                        </div>
+                                                        <input type="number" class="form-control m-l" aria-label="Hue"
+                                                            aria-describedby="magenta-lower-h" value="0" step="1" min="0"
+                                                            max="180" placeholder="Hue" id="m-l-h">
+                                                    </div>
+                                                    <div class="col-6 input-group input-group-sm px-0 pl-1 pb-2">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" id="magenta-lower-s">S</span>
+                                                        </div>
+                                                        <input type="number" class="form-control m-l" aria-label="Saturation"
+                                                            aria-describedby="magenta-lower-s" value="0" step="1" min="0"
+                                                            max="255" placeholder="Sat" id="m-l-s">
+                                                    </div>
+                                                    <div class="col-6 input-group input-group-sm px-0 pr-1">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" id="magenta-lower-v">V</span>
+                                                        </div>
+                                                        <input type="number" class="form-control m-l" aria-label="Value"
+                                                            aria-describedby="magenta-lower-v" value="0" step="1" min="0"
+                                                            max="255" placeholder="Val" id="m-l-v">
+                                                    </div>
+                                                    <div class="col-6 input-group input-group-sm px-0 pl-1">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" id="magenta-lower-a">α</span>
+                                                        </div>
+                                                        <input type="number" class="form-control m-l" aria-label="Alpha"
+                                                            aria-describedby="magenta-lower-a" value="0" step="1" min="0"
+                                                            max="255" placeholder="α" id="m-l-a">
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </form>
+                                    </div>
+                                    <div class="col-sm-6 mb-3">
+                                        <form class="form-inline">
+                                            <fieldset class="col-12 px-2 border rounded">
+                                                <legend class="col-auto mb-0"><small><strong>Upper bound</strong></small></legend>
+                                                <div class="row mx-0 pb-2">
+                                                    <div class="col-6 input-group input-group-sm px-0 pr-1 pb-2">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" id="magenta-upper-h">H</span>
+                                                        </div>
+                                                        <input type="number" class="form-control m-u" aria-label="Hue"
+                                                            aria-describedby="magenta-upper-h" value="0" step="1" min="0"
+                                                            max="180" placeholder="Hue" id="m-u-h">
+                                                    </div>
+                                                    <div class="col-6 input-group input-group-sm px-0 pl-1 pb-2">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" id="magenta-upper-s">S</span>
+                                                        </div>
+                                                        <input type="number" class="form-control m-u" aria-label="Saturation"
+                                                            aria-describedby="magenta-upper-s" value="0" step="1" min="0"
+                                                            max="255" placeholder="Sat" id="m-u-s">
+                                                    </div>
+                                                    <div class="col-6 input-group input-group-sm px-0 pr-1">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" id="magenta-upper-v">V</span>
+                                                        </div>
+                                                        <input type="number" class="form-control m-u" aria-label="Value"
+                                                            aria-describedby="magenta-upper-v" value="0" step="1" min="0"
+                                                            max="255" placeholder="Val" id="m-u-v">
+                                                    </div>
+                                                    <div class="col-6 input-group input-group-sm px-0 pl-1">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" id="magenta-upper-a">α</span>
+                                                        </div>
+                                                        <input type="number" class="form-control m-u" aria-label="Alpha"
+                                                            aria-describedby="magenta-upper-a" value="0" step="1" min="0"
+                                                            max="255" placeholder="α" id="m-u-a">
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-header text-center"><i class="fas fa-chart-area pr-2"></i>Hough Transform</div>
+                            <div class="card-body p-0">
+                                <canvas id="hough-transform" class="rounded-bottom w-100"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-2">
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-header text-center"><i class="fas fa-cogs pr-2"></i>Controlli della webcam</div>
+                            <div class="card-body p-0 d-flex flex-column justify-content-around" id="camera-settings">
+                                <div class="px-3">
+                                    <label for="sharpness-range"><strong>Sharpness (<span id="span-sharpness-range">Not
+                                                supported</span>):</strong></label>
+                                    <input id="sharpness-range" type="range" class="form-control-range custom-range"
+                                        step="1" disabled>
+                                </div>
+                                <div class="px-3">
+                                    <label for="brightness-range"><strong>Brightness (<span id="span-brightness-range"></span>):</strong></label>
+                                    <input id="brightness-range" type="range" class="form-control-range custom-range"
+                                        min="0" max="2" step="0.05" value="1">
+                                </div>
+                                <div class="px-3">
+                                    <label for="contrast-range"><strong>Contrast (<span id="span-contrast-range"></span>):</strong></label>
+                                    <input id="contrast-range" type="range" class="form-control-range custom-range" min="0"
+                                        max="5" step="0.05" value="1">
+                                </div>
+                                <div class="px-3">
+                                    <label for="saturation-range"><strong>Saturation (<span id="span-saturation-range"></span>):</strong></label>
+                                    <input id="saturation-range" type="range" class="form-control-range custom-range"
+                                        min="0" max="5" step="0.1" value="1">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-header text-center">
+                                <i class="fas fa-palette green-text pr-2"></i>Green Chroma Key
+                            </div>
+                            <div class="card-body chroma p-0">
+                                <div class="row mx-0 text-center mt-3 position-absolute w-100">
+                                    <div class="col-sm-6">
+                                        <div class="col-12 input-group input-group-sm px-0 pr-1 pb-2">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="green-erosion"><strong>Erosion:</strong></span>
+                                            </div>
+                                            <input type="number" class="form-control text-center" aria-label="Erosion"
+                                                aria-describedby="green-erosion" value="0" step="1" min="0" max="500"
+                                                placeholder="Value" id="g-e">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">px</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="col-12 input-group input-group-sm px-0 pr-1 pb-2">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="green-dilation"><strong>Dilation:</strong></span>
+                                            </div>
+                                            <input type="number" class="form-control text-center" aria-label="Dilation"
+                                                aria-describedby="green-dilation" value="0" step="1" min="0" max="500"
+                                                placeholder="Value" id="g-d">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">px</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <canvas id="green" class="rounded-bottom w-100" height="350" width="300"></canvas>
+                                <div class="row mx-0 text-center position-absolute color-settings">
+                                    <div class="col-sm-6 mb-3">
+                                        <form class="form-inline">
+                                            <fieldset class="col-12 px-2 border rounded">
+                                                <legend class="col-auto mb-0"><small><strong>Lower bound</strong></small></legend>
+                                                <div class="row mx-0 pb-2">
+                                                    <div class="col-6 input-group input-group-sm px-0 pr-1 pb-2">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" id="green-lower-h">H</span>
+                                                        </div>
+                                                        <input type="number" class="form-control g-l" aria-label="Hue"
+                                                            aria-describedby="green-lower-h" value="0" step="1" min="0"
+                                                            max="180" placeholder="Hue" id="g-l-h">
+                                                    </div>
+                                                    <div class="col-6 input-group input-group-sm px-0 pl-1 pb-2">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" id="green-lower-s">S</span>
+                                                        </div>
+                                                        <input type="number" class="form-control g-l" aria-label="Saturation"
+                                                            aria-describedby="green-lower-s" value="0" step="1" min="0"
+                                                            max="255" placeholder="Sat" id="g-l-s">
+                                                    </div>
+                                                    <div class="col-6 input-group input-group-sm px-0 pr-1">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" id="green-lower-v">V</span>
+                                                        </div>
+                                                        <input type="number" class="form-control g-l" aria-label="Value"
+                                                            aria-describedby="green-lower-v" value="0" step="1" min="0"
+                                                            max="255" placeholder="Val" id="g-l-v">
+                                                    </div>
+                                                    <div class="col-6 input-group input-group-sm px-0 pl-1">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" id="green-lower-a">α</span>
+                                                        </div>
+                                                        <input type="number" class="form-control g-l" aria-label="Alpha"
+                                                            aria-describedby="green-lower-a" value="0" step="1" min="0"
+                                                            max="255" placeholder="α" id="g-l-a">
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </form>
+                                    </div>
+                                    <div class="col-sm-6 mb-3">
+                                        <form class="form-inline">
+                                            <fieldset class="col-12 px-2 border rounded">
+                                                <legend class="col-auto mb-0"><small><strong>Upper bound</strong></small></legend>
+                                                <div class="row mx-0 pb-2">
+                                                    <div class="col-6 input-group input-group-sm px-0 pr-1 pb-2">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" id="green-upper-h">H</span>
+                                                        </div>
+                                                        <input type="number" class="form-control g-u" aria-label="Hue"
+                                                            aria-describedby="green-upper-h" value="0" step="1" min="0"
+                                                            max="180" placeholder="Hue" id="g-u-h">
+                                                    </div>
+                                                    <div class="col-6 input-group input-group-sm px-0 pl-1 pb-2">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" id="green-upper-s">S</span>
+                                                        </div>
+                                                        <input type="number" class="form-control g-u" aria-label="Saturation"
+                                                            aria-describedby="green-upper-s" value="0" step="1" min="0"
+                                                            max="255" placeholder="Sat" id="g-u-s">
+                                                    </div>
+                                                    <div class="col-6 input-group input-group-sm px-0 pr-1">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" id="green-upper-v">V</span>
+                                                        </div>
+                                                        <input type="number" class="form-control g-u" aria-label="Value"
+                                                            aria-describedby="green-upper-v" value="0" step="1" min="0"
+                                                            max="255" placeholder="Val" id="g-u-v">
+                                                    </div>
+                                                    <div class="col-6 input-group input-group-sm px-0 pl-1">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" id="green-upper-a">α</span>
+                                                        </div>
+                                                        <input type="number" class="form-control g-u" aria-label="Alpha"
+                                                            aria-describedby="green-upper-a" value="0" step="1" min="0"
+                                                            max="255" placeholder="α" id="g-u-a">
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-header text-center"><i class="fas fa-gamepad pr-2"></i>Buttons Detection</div>
+                            <div class="card-body text-center p-0">
+                                <img src="img/Joypad_Red_Red.png" id="joypad" class="img-fluid rounded-bottom" alt="Joypad">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="ChromaKey" class="container tab-pane fade border border-top-0 p-2 px-0 mw-100">
+                <div class="border">
+                    <div class="d-flex flex-wrap justify-content-between" role="group" aria-label="Submenu">
+                        <button type="button" id="chroma-info" class="btn btn-secondary col-sm-4 col-lg-2 rounded-0"
+                            data-toggle="modal" data-target="#chroma-modal"><i class="fas fa-info-circle pr-2"></i>Info</button>
+                        <button type="button" id="chroma-save" class="btn btn-secondary col-sm-4 col-lg-2 border-right border-left rounded-0 save"><i
+                                class="fas fa-file-download pr-2"></i>Salva</button>
+                        <button type="button" id="chroma-compile" class="btn btn-secondary col-sm-4 col-lg-2 rounded-0 compile"><i
+                                class="fas fa-play pr-2"></i>Compila</button>
+                        <button type="button" id="chroma-default" class="btn btn-secondary col-sm-4 col-lg-2 border-right border-left rounded-0 default"><i
+                                class="fas fa-redo-alt pr-2"></i>Ricarica default
+                        </button>
+                        <button type="button" id="chroma-solution" class="btn btn-secondary col-sm-4 col-lg-2 rounded-0 solution"><i
+                                class="fas fa-eye pr-2"></i>Mostra
+                            soluzione
+                        </button>
+                        <button type="button" id="chroma-clear" class="btn btn-secondary col-sm-4 col-lg-2 border-left rounded-0"><i
+                                class="fas fa-broom pr-2"></i>Ripulisci output
+                        </button>
+                    </div>
+                    <div id="chromakey_editor" class="editor col-xs-12 w-100">
+                    </div>
+                </div>
+                <!-- Modal -->
+                <div class="modal fade" id="chroma-modal" tabindex="-1" role="dialog" aria-labelledby="chroma-modal"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Suggerimenti e risorse utili</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <a href="https://en.wikipedia.org/wiki/Centroid" target="_blank"><strong>Centroide/Baricentro</strong></a>:
+                                Spiegazione di che cos'è un centro di massa.<br /><br />
+                                <a href="https://en.wikipedia.org/wiki/Image_moment" target="_blank"><strong>Image
+                                        moment</strong></a>: Spiegazione di che cosa sono e le loro proprietà (utili
+                                per il completamento dell'esercizio).<br /><br />
+                                <a href="https://en.wikipedia.org/wiki/HSL_and_HSV" target="_blank"><strong>HSV</strong></a>:
+                                Spiegazione di questo color space.<br /><br />
+                                <div class="text-center">
+                                    <img src="img/HSV_Color_Space.png" class="img-fluid" alt="color space HSV">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <ul class="nav nav-tabs pt-2 cmp" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#chroma-compiler"><i class="fas fa-terminal pr-2"></i>Messaggi
+                            del compilatore</a>
+                    </li>
+                </ul>
+                <div class="tab-content border border-top-0" id="chroma-stio">
+                    <div id="chroma-compiler" class="container tab-pane px-2 mw-100 active compiler">
+                        <p>Loading...</p>
+                    </div>
+                </div>
+            </div>
+            <div id="ButtonsDetection" class="container tab-pane fade border border-top-0 p-2 px-0 mw-100">
+                <div class="border">
+                    <div class="d-flex flex-wrap justify-content-between" role="group" aria-label="Submenu">
+                        <button type="button" id="buttons-info" class="btn btn-secondary col-sm-4 col-lg-2 rounded-0"
+                            data-toggle="modal" data-target="#buttons-modal"><i class="fas fa-info-circle pr-2"></i>Info</button>
+                        <button type="button" id="buttons-save" class="btn btn-secondary col-sm-4 col-lg-2 border-right border-left rounded-0 save"><i
+                                class="fas fa-file-download pr-2"></i>Salva</button>
+                        <button type="button" id="buttons-compile" class="btn btn-secondary col-sm-4 col-lg-2 rounded-0 compile"><i
+                                class="fas fa-play pr-2"></i>Compila</button>
+                        <button type="button" id="buttons-default" class="btn btn-secondary col-sm-4 col-lg-2 border-right border-left rounded-0 default"><i
+                                class="fas fa-redo-alt pr-2"></i>Ricarica default
+                        </button>
+                        <button type="button" id="buttons-solution" class="btn btn-secondary col-sm-4 col-lg-2 rounded-0 solution"><i
+                                class="fas fa-eye pr-2"></i>Mostra
+                            soluzione
+                        </button>
+                        <button type="button" id="buttons-clear" class="btn btn-secondary col-sm-4 col-lg-2 border-left rounded-0"><i
+                                class="fas fa-broom pr-2"></i>Ripulisci output
+                        </button>
+                    </div>
+                    <div id="buttons_detection_editor" class="editor col-xs-12 w-100">
+                    </div>
+                </div>
+                <!-- Modal -->
+                <div class="modal fade" id="buttons-modal" tabindex="-1" role="dialog" aria-labelledby="buttons-modal"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Suggerimenti e risorse utili</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <a href="https://www.youmath.it/formulari/formulari-di-geometria-analitica/434-equazione-della-retta-passante-per-due-punti.html"
+                                    target="_blank"><strong>Retta passante per 2 punti</strong></a>: Spiegazione di
+                                come calcolare la retta passante per due punti (e quindi ricavare l'annesso
+                                coefficiente angolare).<br><br />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <ul class="nav nav-tabs pt-2 cmp" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#buttons-compiler"><i class="fas fa-terminal pr-2"></i>Messaggi
+                            del compilatore</a>
+                    </li>
+                </ul>
+                <div class="tab-content border border-top-0" id="buttons-stio">
+                    <div id="buttons-compiler" class="container tab-pane px-2 mw-100 active compiler">
+                        <p>Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap stuff -->
+    <!--<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+
+
+
+    <script type="text/javascript" src="script/general.js"></script>
+    <script async src="opencv.js" type="text/javascript"></script>
+    <script src="https://requirejs.org/docs/release/2.3.6/minified/require.js"></script>
+    <script type="text/javascript" src="script/custom_OpenCv.js"></script>
+
+    <script src="script/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="script/src-min-noconflict/ext-language_tools.js" type="text/javascript"></script>
+    <script src="script/src-min-noconflict/ext-options.js" type="text/javascript"></script>
+    <script src="script/FileSaver.js" type="text/javascript"></script>
+
+    <script type="text/javascript" src="script/custom_editors.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jnlp spec="1.0+" codebase="../dist" >
+    <information>
+        <title>CVeducation</title>
+        <vendor>Digitalviews</vendor>
+        <!--icon href="gnome-settings-theme.png" kind="default"/-->
+    </information>
+    <security>
+        <all-permissions/>
+    </security>
+    <resources>
+        <!-- j2se version="1.5+" max-heap-size="1024m"/ -->
+        <property name="swing.defaultlaf" value="com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"/>
+<!--        <property name="java.home" value="C:/Program Files/Java/jdk1.6.0_22"/> -->
+        <jar href="CVeducation.jar" main="true" download="eager"/>
+        <nativelib href="dsj_dll.jar" download="eager"/>
+    </resources>
+    <application-desc main-class="it.digitalviews.cveducation.ToolboxWindow">        
+    </application-desc>
+</jnlp>

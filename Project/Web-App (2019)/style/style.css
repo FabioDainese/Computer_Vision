@@ -1,0 +1,46 @@
+/* --- Custom slider --- */
+.slider.slider-horizontal {
+	width: 100% !important;
+}
+.slider-selection {
+	background: #BABABA;
+}
+
+/* --- Custom editor --- */
+.editor {
+	height: 50vh !important;
+	font-size: 14px !important;
+}
+
+.compiler{
+	height: 20vh;
+}
+.compiler p{
+	margin-bottom:0px !important;
+}
+.compiler p::before{
+	content: "> ";
+}
+
+.compiler{
+	overflow: auto;
+}
+
+/* --- General --- */
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; 
+}
+
+input:disabled,input[disabled]{
+	opacity: 0.5;
+}
+ 
+/* --- Colors --- */
+.green-text{
+	color: #00FF00 !important;
+}
+
+.magenta-text{
+	color: #FF00FF !important;
+}
