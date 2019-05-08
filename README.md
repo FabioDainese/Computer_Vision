@@ -12,9 +12,19 @@ If you want to know more about this project you should take a look at the follow
 
 # Screenshots
 <p align="center">
-  <img src="Project/Screenshots/homepage.png" alt="Homepage">
-  <img src="Project/Screenshots/fisrt-task.png" alt="First Task">
-  <img src="Project/Screenshots/second-task.png" alt="Second Task">
+  <kbd>
+    <img src="Project/Screenshots/homepage.png" alt="Homepage">
+  </kbd>
+  <br>
+  <br>
+  <kbd>
+    <img src="Project/Screenshots/first-task.png" alt="First Task">
+  </kbd>
+  <br>
+  <br>
+  <kbd>
+    <img src="Project/Screenshots/second-task.png" alt="Second Task">
+  </kbd>
 </p>
 
 # License
